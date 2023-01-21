@@ -20,10 +20,8 @@ void main(){
    first = insertAfter(first,30,70);
    first = deleteLastNode(first);
    first = deleteFirstNode(first);
-   first = deleteSpecificNode(first,30);
+   first = deleteSpecificNode(first,10);
    traverseLinkedList(first);
-   
-   
 }
 
 struct node{
@@ -141,6 +139,10 @@ struct node* deleteSpecificNode(struct node *first, int y){
    struct node *temp = first;
    while(temp->data!=y){
       temp=temp->next;
+   }
+   if(temp==first){
+      first = deleteFirstNode(first);
+      return first;
    }
    temp->prev->next=temp->next;
    free(temp);

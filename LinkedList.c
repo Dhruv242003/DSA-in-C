@@ -25,7 +25,7 @@ void main(){
     first = InsertAfter(first,30,60);
     first = deleteLastNode(first);
     first = deleteFirstNode(first);
-    deleteSpecificData(first,30);
+    first = deleteSpecificData(first,5);
     traverseLinkedList(first);
 }
 
@@ -152,11 +152,16 @@ struct node* deleteSpecificData(struct node *first, int y){
     struct node *temp = first;
     struct node *prev = first;
     while(temp->data!=y){
+        
         prev=temp;
         temp=temp->ptr;
+        
+    }
+    if(temp==first){
+        first=first->ptr;
     }
     prev->ptr = temp->ptr;
     free(temp);
+    size--;
     return first;
-
 }
