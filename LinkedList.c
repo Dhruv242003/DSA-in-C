@@ -81,7 +81,6 @@ struct node* InsertFront(struct node *first, int data){
         struct node *temp=first;
         new->ptr = temp;
         first = new;
-        
         size++;
     }
     return first;

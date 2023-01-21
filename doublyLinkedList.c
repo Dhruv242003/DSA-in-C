@@ -7,6 +7,9 @@ struct node * insertLast(struct node *first, int data);
 void traverseLinkedList(struct node *first);
 struct node* insertFront(struct node *first, int data);
 struct node* insertAfter(struct node *first, int y ,int data);
+struct node* deleteLastNode(struct node *first);
+struct node* deleteFirstNode(struct node *first);
+struct node* deleteSpecificNode(struct node *first, int y);
 
 void main(){
    struct node *first = createDoubleLinkedList(10);
@@ -15,6 +18,9 @@ void main(){
    first = insertLast(first,40);
    first = insertFront(first,50);
    first = insertAfter(first,30,70);
+   first = deleteLastNode(first);
+   first = deleteFirstNode(first);
+   first = deleteSpecificNode(first,30);
    traverseLinkedList(first);
    
    
@@ -108,4 +114,36 @@ struct node* insertAfter(struct node *first, int y ,int data){
    size++;
    return first;
 
+}
+
+struct node* deleteLastNode(struct node *first){
+   struct node *temp=first;
+   while(temp->next!=NULL){
+      temp = temp->next;
+   }
+   temp->prev->next=NULL;
+   free(temp);
+   size--;
+   return first;
+
+}
+
+struct node* deleteFirstNode(struct node *first){
+   struct node *temp=first;
+   temp->next->prev=NULL;
+   first=temp->next;
+   free(temp);
+   size--;
+   return first;
+}
+
+struct node* deleteSpecificNode(struct node *first, int y){
+   struct node *temp = first;
+   while(temp->data!=y){
+      temp=temp->next;
+   }
+   temp->prev->next=temp->next;
+   free(temp);
+   size--;
+   return first;
 }
