@@ -10,22 +10,23 @@ struct node* InsertAfter(struct node *first, int y , int data);
 struct node* deleteLastNode(struct node *first);
 struct node* deleteFirstNode(struct node *first);
 struct node* deleteSpecificData(struct node *first, int y);
-
 bool isEmpty(struct node *first);
 
 
 int size;
 void main(){
     struct node *first = createLinkedList(5);
-    first = InsertLast(first,10);
-    first = InsertLast(first,20);
-    first = InsertLast(first,30);
-    first = InsertLast(first,40);
-    first = InsertFront(first,50);
-    first = InsertAfter(first,30,60);
-    first = deleteLastNode(first);
+    first = InsertFront(first,10);
+    first = InsertFront(first,20);
     first = deleteFirstNode(first);
-    first = deleteSpecificData(first,5);
+    first = InsertFront(first,40);
+    first = InsertFront(first,50);
+    first = InsertFront(first,30);
+    first = deleteLastNode(first);
+    first = InsertFront(first,80);
+    first = InsertFront(first,5);
+    first = InsertFront(first,90);
+    first = deleteSpecificData(first,80);
     traverseLinkedList(first);
 }
 
@@ -44,8 +45,8 @@ struct node* createLinkedList(int data){
 
     new -> data=data;
     new -> ptr=NULL;
-    first=new;
-    size=1;
+    first = new;
+    size = 1;
     return first;
 }
 
@@ -142,8 +143,8 @@ struct node* deleteLastNode(struct node *first){
 
 struct node* deleteFirstNode(struct node *first){
     struct node *temp=first;
-    free(temp);
     first=first->ptr;
+    free(temp);
     size--;
     return first;
 }

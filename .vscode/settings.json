@@ -32,5 +32,10 @@
     "**/.*/**",
     "**/.vscode",
     "**/.vscode/**"
-  ]
+  ],
+  "C_Cpp.errorSquiggles": "disabled",
+  "files.associations": {
+    "*.ejs": "html",
+    "stdlib.h": "c"
+  }
 }
