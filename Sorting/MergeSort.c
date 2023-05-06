@@ -1,7 +1,8 @@
 #include <stdio.h>
 int arr[5]={5,4,3,2,1};
+int passCount=0;
 void main(){
-    
+    // passCount=0;
     MergeSort(0,4);
     for (int i = 0; i < 5; i++)
     {
@@ -11,6 +12,7 @@ void main(){
 }
 
 void MergeSort(int low, int high){
+    passCount++;
     if(low<high){
         int mid = (high+low)/2;
         MergeSort(low,mid);
@@ -39,7 +41,7 @@ void Merge(int low, int mid, int high){
     while(i<=mid){
         tempArr[k++]=arr[i++];
     }
-    for(int a=0; a<=high;a++){
-        arr[i]=tempArr[i];
+    for(int a=low; a<=high;a++){
+        arr[a]=tempArr[a-low];
     }
 }

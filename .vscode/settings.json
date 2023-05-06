@@ -36,6 +36,8 @@
   "C_Cpp.errorSquiggles": "disabled",
   "files.associations": {
     "*.ejs": "html",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "BST.C": "cpp",
+    "stdbool.h": "c"
   }
 }
