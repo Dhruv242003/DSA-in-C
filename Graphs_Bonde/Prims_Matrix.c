@@ -64,7 +64,7 @@ int main() {
 
     return 0;
 }
-\/*
+/*
 
 Enter the number of vertices in the graph: 6
 Enter the adjacency matrix of the graph:

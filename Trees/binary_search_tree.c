@@ -162,6 +162,7 @@ void mirrorImage(struct Node* root) {
 
     while (top >= 0) {
         struct Node* current = stack[top--];
+        
         struct Node* temp = current->left;
 
         

@@ -9,6 +9,10 @@ struct ListNode{
     int weight;
 };
 
+struct Edge{
+    int s, d, w;
+};
+
 
 void insertEdge(int a, int b,int weight, struct ListNode *adjList[]){
 
@@ -27,15 +31,15 @@ void insertEdge(int a, int b,int weight, struct ListNode *adjList[]){
     }
 }
 
-void getAdjacencyListInput(struct ListNode *adjList[],int vertex){
+void getAdjacencyListInput(struct ListNode *adjList[],int vertex,int edge){
     
     for(int i=0; i<vertex; i++){
         adjList[i] = NULL;
     }
 
-    printf("Enter the number edges\n");
-    int n;
-    scanf("%d",&n);
+    // printf("Enter the number edges\n");
+    int n = edge;
+    // scanf("%d",&n);
 
     for(int i=0 ; i<n ; i++){
         int a,b,w;
@@ -112,7 +116,162 @@ void DFS(struct ListNode* adjList[], int vertex, int start, bool visited[]){
     }
 }
 
-// Prims 
+//###################### Kruskals ###############
+
+
+int find(int parent[], int x){
+    if(parent[x]==x) return x;
+    return find(parent,parent[x]);
+}
+
+void Union(int parent[], int rank[], int x, int y){
+    int xroot = find(parent,x);
+    int yroot = find(parent,y);
+
+    if(rank[xroot] < rank[yroot]){
+        parent[xroot] = yroot;
+    }
+    else if(rank[xroot] > rank[yroot]){
+        parent[yroot]=xroot;
+    }
+    else{
+        parent[yroot] = xroot;
+        rank[xroot]++;
+    }
+}
+
+void Kruskals(struct ListNode* adjList[], int vertex, int edge){
+    struct Edge result[vertex];
+    int i =0; 
+    int e =0;  // final edge count
+
+    struct Edge edges[edge];
+
+    for(int v=0; v<vertex; v++){
+        struct ListNode* temp = adjList[v];
+
+        while(temp!=NULL){
+            edges[i].s = v;
+            edges[i].d = temp->data;
+            edges[i].w = temp->weight;
+            temp = temp->next;
+            i++;
+        }
+    }
+
+    // Now edges has every edge in random manner
+
+    // we have to sort this array in asceding order according to the weights
+    // ## Bubble sort
+    for(int a =0; a<edge-1; a++){
+        for(int b =0; b<edge-1-a; b++){
+            if(edges[b].w > edges[b+1].w){
+                struct Edge temp = edges[b];
+                edges[b] = edges[b+1];
+                edges[b+1] = temp;
+            }
+        }
+    }
+
+    int parent[vertex];
+    int rank[vertex];
+
+    // Initiallly each vertex is its own parent 
+
+    for (int v =0 ; v<vertex; v++){
+        parent[v]=v;     // parent[5]=[0,1,2,3,4];   for 5 vertex
+        rank[v]=0;
+    }
+
+    i = 0;
+
+    // Now we have the sorted edges array
+
+    while(e<vertex-1 && i<edge){   // unitl there are (n-1) edges where n=no. of vertex
+        struct Edge next_edge = edges[i++];
+
+        // for this edge we will check its source and destination that it
+        // has a parent or not, and what is that parent
+
+        int x = find(parent, next_edge.s);
+        int y = find(parent, next_edge.d);
+
+        if(x!=y){
+            result[e++] = next_edge;
+            Union(parent,rank,x,y);
+        }
+
+    }
+    printf("Following are the edges in the constructed MST\n");
+    int minimumCost = 0;
+    for(i = 0; i < e; i++) {
+        printf("%d -- %d == %d\n", result[i].s, result[i].d, result[i].w);
+        minimumCost += result[i].w;
+    }
+
+    printf("Minimum cost spanning tree is: %d", minimumCost);
+
+}
+
+
+// ############# Dijkstras ############
+
+void dijkstra(struct ListNode *adjList[], int vertex, int start){
+    int dist[vertex];
+    bool visited[vertex];
+
+    for(int i=0;i<vertex;i++){
+        dist[i] = INT_MAX;
+        visited[i] = false;
+    }
+
+    dist[start] = 0;
+
+    for(int i=0;i<vertex-1;i++){
+        int u = -1;
+        for(int j=0;j<vertex;j++){
+            if(!visited[j] && (u == -1 || dist[j] < dist[u])){
+                u = j;
+            }
+        }
+
+        visited[u] = true;
+
+        struct ListNode* temp = adjList[u];
+        while(temp != NULL){
+            int v = temp->data;
+            int weight = temp->weight;
+            if(!visited[v] && dist[u] + weight < dist[v]){
+                dist[v] = dist[u] + weight;
+            }
+            temp = temp->next;
+        }
+    }
+
+    printf("Shortest distances from start vertex %d:\n", start);
+    for(int i=0;i<vertex;i++){
+        printf("Vertex %d: %d\n", i, dist[i]);
+    }
+    
+}
+
+
+void printPath(struct ListNode* adjList[], int start, int end) {
+    if (start == end) {
+        printf("%d ", start);
+        return;
+    }
+
+    if (adjList[end]->parent == -1) {
+        printf("No path exists\n");
+        return;
+    }
+
+    printPath(adjList, start, adjList[end]->parent);
+    printf("%d ", end);
+}
+
+
 
 void primMST(struct ListNode *adjList[], int vertex, int start){
     int parent[vertex]; 
@@ -170,7 +329,10 @@ void main(){
     scanf("%d",&vertex);
     struct ListNode *adjList[vertex];
 
-    getAdjacencyListInput(adjList,vertex);
+    int edge;
+    printf("Enter the number of edges\n");
+    scanf("%d",&edge);
+    getAdjacencyListInput(adjList,vertex,edge);
 
     printAdjList(adjList,vertex);
 
@@ -185,6 +347,9 @@ void main(){
     printf("\nDFS: ");
 
     DFS(adjList,vertex,0,visited);
+
+    // Kruskals(adjList, vertex,edge);
+    dijkstra(adjList,vertex,0);
     // printf("%d",adjList[0]->data);
     // int start;
     // printf("Enter the start vertex ");

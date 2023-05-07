@@ -1,0 +1,992 @@
+################# MERGE SORT ##########################
+
+
+#include <stdio.h>
+int arr[5]={5,4,3,2,1};
+int passCount=0;
+void main(){
+    // passCount=0;
+    MergeSort(0,4);
+    for (int i = 0; i < 5; i++)
+    {
+        printf("%d ",arr[i]);
+    }
+    
+}
+
+void MergeSort(int low, int high){
+    passCount++;
+    if(low<high){
+        int mid = (high+low)/2;
+        MergeSort(low,mid);
+        MergeSort(mid+1,high);
+
+        Merge(low,mid,high);
+    }
+}
+
+void Merge(int low, int mid, int high){
+    int tempArr[5];
+    int i = low;
+    int j = mid + 1;
+    int k = 0;
+    while(i<=mid && j<=high){
+        if(arr[i]<=arr[j]){
+            tempArr[k++]=arr[i++];
+        }
+        else{
+            tempArr[k++]=arr[j++];
+        }
+    }
+    while(j<=high){
+        tempArr[k++]=arr[j++];
+    }
+    while(i<=mid){
+        tempArr[k++]=arr[i++];
+    }
+    for(int a=low; a<=high;a++){
+        arr[a]=tempArr[a-low];
+    }
+}
+
+
+
+################ QUICK SORT ####################
+
+#include <stdio.h>
+
+
+void QuickSort(int p, int q, int arr[]);
+int partition(int p, int q, int arr[]);
+void swap(int a, int b, int arr[]);
+
+
+void main(){
+
+    int n;
+    printf("Enter the size of the array");
+    scanf("%d",&n);
+
+    int arr[n];
+    printf("Enter the elements of the array\n");
+    for (int i = 0; i < n; i++){
+        scanf("%d",&arr[i]);
+    }
+
+    QuickSort(0,n-1,arr);
+    for(int i =0 ; i<n; i++){
+        printf("%d ",arr[i]);
+    }
+}
+int partition(int p, int q, int arr[]){
+    int pivot = arr[p];
+    int i = p+1;
+    int j = q;
+    while(1){
+        while(arr[i]<=pivot){
+            i++;
+        }
+        while(arr[j]>pivot){
+            j--;
+        }
+        if(i<j){
+            swap(i,j, arr);
+        }
+        else{
+            swap(p,j,arr);
+            break;
+        }
+    }
+    return j;
+}
+void swap(int num1, int num2, int arr[]) {
+   int temp =  arr[num1];
+   arr[num1] = arr[num2];
+   arr[num2] = temp;
+}
+void QuickSort(int p, int q, int arr[]){
+    if(p<q){
+        int j = partition(p,q,arr);
+        QuickSort(p,j-1,arr);
+        QuickSort(j+1,q,arr);
+    }
+}
+
+
+
+############### AVL TREES ##########################
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int key;
+    int height;
+    struct Node* left;
+    struct Node* right;
+};
+
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+int height(struct Node* node) {
+    if (node == NULL)
+        return 0;
+    return node->height;
+}
+
+int getBalance(struct Node* node) {
+    if (node == NULL)
+        return 0;
+    return height(node->left) - height(node->right);
+}
+
+struct Node* rightRotate(struct Node* y) {
+    struct Node* x = y->left;
+    struct Node* T2 = x->right;
+
+    x->right = y;
+    y->left = T2;
+
+    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = max(height(x->left), height(x->right)) + 1;
+
+    return x;
+}
+
+struct Node* leftRotate(struct Node* x) {
+    struct Node* y = x->right;
+    struct Node* T2 = y->left;
+
+    y->left = x;
+    x->right = T2;
+
+    x->height = max(height(x->left), height(x->right)) + 1;
+    y->height = max(height(y->left), height(y->right)) + 1;
+
+    return y;
+}
+
+struct Node* newNode(int key) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->key = key;
+    node->left = NULL;
+    node->right = NULL;
+    node->height = 1;
+    return node;
+}
+
+struct Node* insert(struct Node* node, int key) {
+    if (node == NULL)
+        return newNode(key);
+
+    if (key < node->key)
+        node->left = insert(node->left, key);
+    else if (key > node->key)
+        node->right = insert(node->right, key);
+    else
+        return node;
+
+    node->height = 1 + max(height(node->left), height(node->right));
+
+    int balance = getBalance(node);
+
+    if (balance > 1 && key < node->left->key)
+        return rightRotate(node);
+
+    if (balance < -1 && key > node->right->key)
+        return leftRotate(node);
+
+    if (balance > 1 && key > node->left->key) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    if (balance < -1 && key < node->right->key) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    return node;
+}
+
+void preorderTraversal(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->key);
+        preorderTraversal(root->left);
+        preorderTraversal(root->right);
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+
+    root = insert(root, 10);
+    
+    root = insert(root, 30);
+   
+    root = insert(root, 50);
+    root = insert(root, 25);
+     root = insert(root, 40);
+     root = insert(root, 20);
+
+    printf("Preorder Traversal of AVL tree: ");
+    preorderTraversal(root);
+
+    return 0;
+}
+
+################# TREES (BST)  ##############################
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+
+
+struct Node* insertNode(struct Node* root, int data) {
+   struct Node *new = (struct Node *)(malloc(sizeof(struct Node)));
+    if (root == NULL)
+    {
+        new->data = data;
+        new->left = NULL;
+        new->right = NULL;
+        root = new;
+        return root;
+    }
+    else
+    {
+        struct Node *temp = root;     // For traversing
+        while (1)
+        {
+            if (temp->data > data)
+            {
+                if (temp->left != NULL)
+                {
+                    temp = temp->left;
+                }
+                else
+                {
+                    new->data = data;
+                    new->left = NULL;
+                    new->right = NULL;
+                    temp->left = new;
+                    return root;
+                }
+            }
+            else
+            {
+                if (temp->right != NULL)
+                {
+                    temp = temp->right;
+                }
+                else
+                {
+                    new->data = data;
+                    new->left = NULL;
+                    new->right = NULL;
+                    temp->right = new;
+                    return root;
+                }
+            }
+        }
+    }
+}
+
+void postorderTraversal(struct Node* root) {   // LRD
+    if (root == NULL) {
+        printf("Tree is empty!\n");
+        return;
+    }
+    struct Node* stack[100];
+    int top = -1;
+    struct Node* prev = NULL;
+    struct Node *temp = root;
+    do {
+        while (temp != NULL) {
+            stack[++top] = temp;
+            temp = temp->left;
+        }
+        while (temp == NULL && top != -1) {
+            temp = stack[top];
+            if (temp->right == NULL || temp->right == prev) {
+                printf("%d ", temp->data);
+                prev = temp;
+                top--;
+                temp = NULL;
+            } else {
+                temp = temp->right;
+            }
+        }
+    } while (top != -1);
+}
+
+
+
+void preorderTraversal(struct Node* root) {     // DLR
+    if (root == NULL){
+        printf("Tree is empty!\n");
+        return;
+    }
+    struct Node* stack[100];
+    int top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        struct Node* currentNode = stack[top--];
+        printf("%d ", currentNode->data);
+        if (currentNode->right != NULL){
+            stack[++top] = currentNode->right;
+        } 
+        if (currentNode->left != NULL){
+            stack[++top] = currentNode->left;
+        }
+    }
+}
+
+void inorderTraversal(struct Node* root) {
+    if (root == NULL){
+        return;
+    }
+    struct Node* stack[100];
+    int top = -1;
+    struct Node* currentNode = root;
+    while (currentNode != NULL || top >= 0) {
+        while (currentNode != NULL) {
+            stack[++top] = currentNode;
+            currentNode = currentNode->left;
+        }
+        currentNode = stack[top--];
+        printf("%d ", currentNode->data);
+        currentNode = currentNode->right;
+    }
+}
+
+int countLeafNodes(struct Node* root) {
+    if (root == NULL) {
+        return 0;
+    }
+    int count = 0;
+    struct Node* stack[100];
+    int top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        struct Node* current = stack[top--];
+        if (current->left == NULL && current->right == NULL) {
+            count++;
+        } else {
+            if (current->right != NULL) {
+                stack[++top] = current->right;
+            }
+            if (current->left != NULL) {
+                stack[++top] = current->left;
+            }
+        }
+    }
+    return count;
+}
+
+void mirrorImage(struct Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    struct Node* stack[100];
+    int top = -1;
+    stack[++top] = root;
+
+
+    while (top >= 0) {
+        struct Node* current = stack[top--];
+        
+        struct Node* temp = current->left;
+
+        
+        current->left = current->right;
+        current->right = temp;
+
+
+        if (current->right != NULL) {
+            stack[++top] = current->right;
+        }
+        if (current->left != NULL) {
+            stack[++top] = current->left;
+        }
+    }
+}
+
+
+
+// void deleteNode(struct Node* root, int value) {
+//     struct Node* parent = NULL;
+//     struct Node* currentNode = root;
+
+
+
+//     while (currentNode != NULL && currentNode->data != value) {
+//         parent = currentNode;
+//         if (value < currentNode->data) {
+//             currentNode = currentNode->left;
+//         } else {
+//             currentNode = currentNode->right;
+//         }
+//     }
+
+
+
+
+//     if (currentNode == NULL) {
+//         printf("Node not found in the tree.\n");
+//         return;
+//     }
+
+
+//     if (currentNode->left == NULL && currentNode->right == NULL) {
+//         if (currentNode == root) {
+//             root = NULL;
+//         } 
+//         else if (currentNode == parent->left) {
+//             parent->left = NULL;
+//         } else {
+//             parent->right = NULL;
+//         }
+//         free(currentNode);
+
+//     } 
+
+
+//     else if (currentNode->left == NULL) {
+//         if (currentNode == root) {
+//             root = currentNode->right;
+//         } 
+        
+//         else if (currentNode == parent->left) {
+//             parent->left = currentNode->right;
+//         } else {
+//             parent->right = currentNode->right;
+//         }
+//         free(currentNode);
+//     } 
+    
+    
+    
+//     else if (currentNode->right == NULL) {
+//         if (currentNode == root) {
+//             root = currentNode->left;
+//         } else if (currentNode == parent->left) {
+//             parent->left = currentNode->left;
+//         } else {
+//             parent->right = currentNode->left;
+//         }
+//         free(currentNode);
+//     } 
+    
+//     else {
+//         struct Node* replacementNode = currentNode->right;
+//         while (replacementNode->left != NULL) {
+//             replacementNode = replacementNode->left;
+//         }
+//         currentNode->data = replacementNode->data;
+//         deleteNode(currentNode->right, replacementNode->data);
+//     }
+// }
+
+
+struct Node *inOrderPredecessor(struct Node* root){
+    root = root->left;
+    while (root->right!=NULL)
+    {
+        root = root->right;
+    }
+    return root;
+}
+
+int isBST(struct  node* root){
+    static struct node *prev = NULL;
+    if(root!=NULL){
+        if(!isBST(root->left)){
+            return 0;
+        }
+        if(prev!=NULL && root->data <= prev->data){
+            return 0;
+        }
+        prev = root;
+        return isBST(root->right);
+    }
+    else{
+        return 1;
+    }
+}
+
+
+struct Node *deleteNode(struct Node *root, int value){
+
+    struct Node* iPre;
+    if (root == NULL){
+        return NULL;
+    }
+    if (root->left==NULL&&root->right==NULL){
+        free(root);
+        return NULL;
+    }
+
+    if (value < root->data){
+        root-> left = deleteNode(root->left,value);
+    }
+
+    else if (value > root->data){
+        root-> right = deleteNode(root->right,value);
+    }
+
+
+    else{
+        iPre = inOrderPredecessor(root);
+        root->data = iPre->data;
+        root->left = deleteNode(root->left, iPre->data);
+    }
+    return root;
+}
+
+
+
+
+int main() {
+    struct Node* root = NULL;
+    
+    int n;
+    printf("Enter the number of nodes in the BST:");
+    scanf("%d", &n);
+    printf("Enter the data of nodes:");
+    for (int i = 0; i < n; i++)
+    {
+        int data;
+        scanf("%d", &data);
+        root = insertNode(root, data);
+    }
+
+
+    // printf("Preorder Traversal: \n");
+    // preorderTraversal(root);
+    // printf("\n");
+    // printf("Inorder Traversal\n");
+    // inorderTraversal(root);
+    // printf("\n");
+    // printf("postOrder Traversal\n");
+    // postorderTraversal(root);
+    // printf("\n");
+    // printf("Number of Leaf Nodes:  %d\n",countLeafNodes(root));
+    // printf("\n");
+    // printf("Mirror Image Done\n");
+    // mirrorImage(root);
+    // printf("\n");
+    // printf("Preorder Traversal: \n");
+    // preorderTraversal(root);
+    // printf("\n");
+    // printf("Inorder Traversal\n");
+    // inorderTraversal(root);
+    // printf("\n");
+    // printf("postOrder Traversal\n");
+    // postorderTraversal(root);
+    // printf("\n");
+    // printf("Number of Leaf Nodes:  %d\n",countLeafNodes(root));
+    // printf("\n");
+
+
+    printf("Enter value to delete\n");
+    int a;
+    scanf("%d",&a);
+    printf("Inorder Traversal\n");
+    inorderTraversal(root);
+    printf("\n");
+    printf("Number of Leaf Nodes:  %d\n",countLeafNodes(root));
+    printf("\n");
+
+    printf("after deleting\n");
+    deleteNode(root,a);
+    printf("Inorder Traversal\n");
+    inorderTraversal(root);
+    printf("\n");
+    printf("Number of Leaf Nodes:  %d\n",countLeafNodes(root));
+    printf("\n");
+
+
+}
+
+
+
+###################### GRAPHS #################################
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+struct ListNode{
+    int data;
+    struct ListNode *next;
+    int weight;
+};
+
+struct Edge{
+    int s, d, w;
+};
+
+
+void insertEdge(int a, int b,int weight, struct ListNode *adjList[]){
+
+    if(adjList[a]==NULL){
+        adjList[a] = (struct ListNode*)malloc(sizeof(struct ListNode));
+        adjList[a]->data = b;
+        adjList[a]->weight = weight;
+        adjList[a]->next=NULL;
+    }
+    else if(adjList[a] != NULL){
+        struct ListNode* temp = (struct ListNode*)malloc(sizeof(struct ListNode));
+        temp->data = b;
+        temp->weight = weight;
+        temp->next = adjList[a];
+        adjList[a]=temp;
+    }
+}
+
+void getAdjacencyListInput(struct ListNode *adjList[],int vertex,int edge){
+    
+    for(int i=0; i<vertex; i++){
+        adjList[i] = NULL;
+    }
+
+    // printf("Enter the number edges\n");
+    int n = edge;
+    // scanf("%d",&n);
+
+    for(int i=0 ; i<n ; i++){
+        int a,b,w;
+        printf("Enter the edge vertices and its weight\n");
+        scanf("%d%d%d",&a,&b,&w);
+
+        insertEdge(a,b,w,adjList);
+        insertEdge(b,a,w,adjList);
+    }
+    printf("\nAdjacency List created successfully !!!\n \n");
+}
+
+
+void printAdjList(struct ListNode *adjList[],int vertex){
+    printf("The Adjacency List You Gave ! \n");
+    for(int i =0 ; i<vertex; i++){
+        if(adjList[i]==NULL){
+            printf("%d -> NULL\n",i);
+        }
+        else{
+            struct ListNode* temp = adjList[i];
+            printf("%d : --(w:%d)-%d",i,adjList[i]->weight,adjList[i]->data);
+            while(temp->next!=NULL){
+                temp = temp->next;
+                printf("--(w:%d)->%d ",temp->weight,temp->data);
+            }
+            
+            printf("\n");  
+        }
+    }
+}
+
+void BFS(int start, struct ListNode *adjList[], int vertex) {
+    bool visited[vertex];
+    for(int i = 0; i < vertex; i++) {
+        visited[i] = false;
+    }
+
+    int queue[vertex];
+    int front = 0;
+    int rear = 0;
+    queue[rear] = start;
+    visited[start] = true;
+
+    while(front <= rear) {   // queue is not empty 
+        int currentVertex = queue[front++];   //deQueue
+        printf("%d ", currentVertex);
+
+        struct ListNode* temp = adjList[currentVertex];   
+
+        while(temp != NULL) {
+            int adjVertex = temp->data;
+
+            if(!visited[adjVertex]) {
+                queue[++rear] = adjVertex;
+                visited[adjVertex] = true;
+            }
+
+            temp = temp->next;
+        }
+    }
+}
+
+void DFS(struct ListNode* adjList[], int vertex, int start, bool visited[]){
+    visited[start] = true;
+    printf("%d ", start);
+    struct ListNode* ptr = adjList[start];
+    while (ptr != NULL) {
+        int v = ptr->data;
+        if (!visited[v]) {
+            DFS(adjList, vertex, v, visited);
+        }
+        ptr = ptr->next;
+    }
+}
+
+//###################### Kruskals ###############
+
+
+int find(int parent[], int x){
+    if(parent[x]==x) return x;
+    return find(parent,parent[x]);
+}
+
+void Union(int parent[], int rank[], int x, int y){
+    int xroot = find(parent,x);
+    int yroot = find(parent,y);
+
+    if(rank[xroot] < rank[yroot]){
+        parent[xroot] = yroot;
+    }
+    else if(rank[xroot] > rank[yroot]){
+        parent[yroot]=xroot;
+    }
+    else{
+        parent[yroot] = xroot;
+        rank[xroot]++;
+    }
+}
+
+void Kruskals(struct ListNode* adjList[], int vertex, int edge){
+    struct Edge result[vertex];
+    int i =0; 
+    int e =0;  // final edge count
+
+    struct Edge edges[edge];
+
+    for(int v=0; v<vertex; v++){
+        struct ListNode* temp = adjList[v];
+
+        while(temp!=NULL){
+            edges[i].s = v;
+            edges[i].d = temp->data;
+            edges[i].w = temp->weight;
+            temp = temp->next;
+            i++;
+        }
+    }
+
+    // Now edges has every edge in random manner
+
+    // we have to sort this array in asceding order according to the weights
+    // ## Bubble sort
+    for(int a =0; a<edge-1; a++){
+        for(int b =0; b<edge-1-a; b++){
+            if(edges[b].w > edges[b+1].w){
+                struct Edge temp = edges[b];
+                edges[b] = edges[b+1];
+                edges[b+1] = temp;
+            }
+        }
+    }
+
+    int parent[vertex];
+    int rank[vertex];
+
+    // Initiallly each vertex is its own parent 
+
+    for (int v =0 ; v<vertex; v++){
+        parent[v]=v;     // parent[5]=[0,1,2,3,4];   for 5 vertex
+        rank[v]=0;
+    }
+
+    i = 0;
+
+    // Now we have the sorted edges array
+
+    while(e<vertex-1 && i<edge){   // unitl there are (n-1) edges where n=no. of vertex
+        struct Edge next_edge = edges[i++];
+
+        // for this edge we will check its source and destination that it
+        // has a parent or not, and what is that parent
+
+        int x = find(parent, next_edge.s);
+        int y = find(parent, next_edge.d);
+
+        if(x!=y){
+            result[e++] = next_edge;
+            Union(parent,rank,x,y);
+        }
+
+    }
+    printf("Following are the edges in the constructed MST\n");
+    int minimumCost = 0;
+    for(i = 0; i < e; i++) {
+        printf("%d -- %d == %d\n", result[i].s, result[i].d, result[i].w);
+        minimumCost += result[i].w;
+    }
+
+    printf("Minimum cost spanning tree is: %d", minimumCost);
+
+}
+
+
+// ############# Dijkstras ############
+
+void dijkstra(struct ListNode *adjList[], int vertex, int start){
+    int dist[vertex];
+    bool visited[vertex];
+
+    for(int i=0;i<vertex;i++){
+        dist[i] = INT_MAX;
+        visited[i] = false;
+    }
+
+    dist[start] = 0;
+
+    for(int i=0;i<vertex-1;i++){
+        int u = -1;
+        for(int j=0;j<vertex;j++){
+            if(!visited[j] && (u == -1 || dist[j] < dist[u])){
+                u = j;
+            }
+        }
+
+        visited[u] = true;
+
+        struct ListNode* temp = adjList[u];
+        while(temp != NULL){
+            int v = temp->data;
+            int weight = temp->weight;
+            if(!visited[v] && dist[u] + weight < dist[v]){
+                dist[v] = dist[u] + weight;
+            }
+            temp = temp->next;
+        }
+    }
+
+    printf("Shortest distances from start vertex %d:\n", start);
+    for(int i=0;i<vertex;i++){
+        printf("Vertex %d: %d\n", i, dist[i]);
+    }
+    
+}
+
+
+void printPath(struct ListNode* adjList[], int start, int end) {
+    if (start == end) {
+        printf("%d ", start);
+        return;
+    }
+
+    if (adjList[end]->parent == -1) {
+        printf("No path exists\n");
+        return;
+    }
+
+    printPath(adjList, start, adjList[end]->parent);
+    printf("%d ", end);
+}
+
+
+
+void primMST(struct ListNode *adjList[], int vertex, int start){
+    int parent[vertex]; 
+    int key[vertex]; 
+    bool mstSet[vertex]; 
+
+    int totalWeight = 0; 
+
+    for(int i = 0; i < vertex; i++){
+        key[i] = INT_MAX;
+        mstSet[i] = false;
+    }
+
+
+    key[0] = start; 
+    parent[0] = -1; 
+
+    for(int i = 0; i < vertex-1; i++){
+        int u, minKey = INT_MAX;
+
+        for(int j = 0; j < vertex; j++){
+            if(!mstSet[j] && key[j] < minKey){
+                minKey = key[j];
+                u = j;
+            }
+        }
+
+        mstSet[u] = true; 
+
+        struct ListNode* temp = adjList[u];
+        while(temp != NULL){
+            int v = temp->data;
+            int weight = temp->weight;
+            if(!mstSet[v] && weight < key[v]){
+                parent[v] = u;
+                key[v] = weight;
+            }
+            temp = temp->next;
+        }
+        totalWeight += key[u]; 
+    }
+
+    printf("Minimum Cost Spanning Tree:\n");
+    for(int i = 1; i < vertex; i++){
+        printf("%d - %d\n", parent[i], i);
+    }
+    printf("Total cost of MST: %d\n", totalWeight); 
+}
+
+
+
+void main(){
+    int vertex;
+    printf("Enter number of vertex\n");
+    scanf("%d",&vertex);
+    struct ListNode *adjList[vertex];
+
+    int edge;
+    printf("Enter the number of edges\n");
+    scanf("%d",&edge);
+    getAdjacencyListInput(adjList,vertex,edge);
+
+    printAdjList(adjList,vertex);
+
+    printf("BFS: ");
+
+    BFS(0,adjList,vertex);
+
+    bool visited[vertex];
+    for(int i=0;i<vertex;i++){
+        visited[i] = false;
+    }
+    printf("\nDFS: ");
+
+    DFS(adjList,vertex,0,visited);
+
+    // Kruskals(adjList, vertex,edge);
+    dijkstra(adjList,vertex,0);
+    // printf("%d",adjList[0]->data);
+    // int start;
+    // printf("Enter the start vertex ");
+    // scanf("%d",&start);
+
+    // primMST(adjList,vertex,start);
+}
+
+
+###############################################################################
+
+
+
+
+
