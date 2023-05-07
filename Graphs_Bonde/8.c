@@ -1,7 +1,14 @@
+/******************************************************************************
+Write a Program to implement Prims algorithm to find
+minimum spanning tree of a user defined graph. Use Adjacency
+List to represent a graph.
+
+*******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
+
 
 struct ListNode{
     int data;
@@ -11,6 +18,7 @@ struct ListNode{
 
 
 void insertEdge(int a, int b,int weight, struct ListNode *adjList[]){
+
 
     if(adjList[a]==NULL){
         adjList[a] = (struct ListNode*)malloc(sizeof(struct ListNode));
@@ -31,7 +39,9 @@ void primMST(struct ListNode *adjList[], int vertex, int start){
     int key[vertex]; 
     bool mstSet[vertex]; 
 
+
     int totalWeight = 0; 
+
 
     for(int i = 0; i < vertex; i++){
         key[i] = INT_MAX;
@@ -42,8 +52,10 @@ void primMST(struct ListNode *adjList[], int vertex, int start){
     key[0] = start; 
     parent[0] = -1; 
 
+
     for(int i = 0; i < vertex-1; i++){
         int u, minKey = INT_MAX;
+
 
         for(int j = 0; j < vertex; j++){
             if(!mstSet[j] && key[j] < minKey){
@@ -52,7 +64,9 @@ void primMST(struct ListNode *adjList[], int vertex, int start){
             }
         }
 
+
         mstSet[u] = true; 
+
 
         struct ListNode* temp = adjList[u];
         while(temp != NULL){
@@ -67,12 +81,14 @@ void primMST(struct ListNode *adjList[], int vertex, int start){
         totalWeight += key[u]; 
     }
 
+
     printf("Minimum Cost Spanning Tree:\n");
     for(int i = 1; i < vertex; i++){
         printf("%d - %d\n", parent[i], i);
     }
     printf("Total cost of MST: %d\n", totalWeight); 
 }
+
 
 void printAdjList(struct ListNode *adjList[],int vertex){
     printf("The Adjacency List You Gave ! \n");
@@ -100,14 +116,17 @@ void getAdjacencyListInput(struct ListNode *adjList[],int vertex){
         adjList[i] = NULL;
     }
 
+
     printf("Enter the number edges\n");
     int n;
     scanf("%d",&n);
+
 
     for(int i=0 ; i<n ; i++){
         int a,b,w;
         printf("Enter the edge vertices and its weight\n");
         scanf("%d%d%d",&a,&b,&w);
+
 
         insertEdge(a,b,w,adjList);
         insertEdge(b,a,w,adjList);
@@ -138,12 +157,16 @@ void main(){
     scanf("%d",&vertex);
     struct ListNode *adjList[vertex];
 
+
     getAdjacencyListInput(adjList,vertex);
+
 
     printAdjList(adjList,vertex);
     int start;
     printf("Enter the start vertex ");
     scanf("%d",&start);
 
+
     primMST(adjList,vertex,start);
 }
+
