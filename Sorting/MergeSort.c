@@ -34,6 +34,7 @@ void Merge(int low, int mid, int high){
         else{
             tempArr[k++]=arr[j++];
         }
+        
     }
     while(j<=high){
         tempArr[k++]=arr[j++];
