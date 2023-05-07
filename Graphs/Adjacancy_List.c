@@ -68,19 +68,48 @@ void printAdjList(struct ListNode *adjList[],int vertex){
     }
 }
 
-void BFS(struct ListNode *asjList[], int start,int vertex){
-    int visited[100];
-    int v=0;
+void BFS(int start, struct ListNode *adjList[], int vertex) {
+    bool visited[vertex];
+    for(int i = 0; i < vertex; i++) {
+        visited[i] = false;
+    }
 
-    int ExploreQueue[100];
-    int exploreTop = -1;
+    int queue[vertex];
+    int front = 0;
+    int rear = 0;
+    queue[rear] = start;
+    visited[start] = true;
 
-    struct ListNode *queue[100];
+    while(front <= rear) {   // queue is not empty 
+        int currentVertex = queue[front++];   //deQueue
+        printf("%d ", currentVertex);
 
-    
+        struct ListNode* temp = adjList[currentVertex];   
 
+        while(temp != NULL) {
+            int adjVertex = temp->data;
 
+            if(!visited[adjVertex]) {
+                queue[++rear] = adjVertex;
+                visited[adjVertex] = true;
+            }
 
+            temp = temp->next;
+        }
+    }
+}
+
+void DFS(struct ListNode* adjList[], int vertex, int start, bool visited[]){
+    visited[start] = true;
+    printf("%d ", start);
+    struct ListNode* ptr = adjList[start];
+    while (ptr != NULL) {
+        int v = ptr->data;
+        if (!visited[v]) {
+            DFS(adjList, vertex, v, visited);
+        }
+        ptr = ptr->next;
+    }
 }
 
 // Prims 
@@ -144,6 +173,19 @@ void main(){
     getAdjacencyListInput(adjList,vertex);
 
     printAdjList(adjList,vertex);
+
+    printf("BFS: ");
+
+    BFS(0,adjList,vertex);
+
+    bool visited[vertex];
+    for(int i=0;i<vertex;i++){
+        visited[i] = false;
+    }
+    printf("\nDFS: ");
+
+    DFS(adjList,vertex,0,visited);
+    // printf("%d",adjList[0]->data);
     // int start;
     // printf("Enter the start vertex ");
     // scanf("%d",&start);
