@@ -1,0 +1,230 @@
+//prims
+#include<stdio.h>
+#include<stdlib.h>
+
+int minKey(int visited[], int vertices, int key[]){
+    int min = 9999;
+    int min_index;
+    for(int i = 0; i<vertices; i++){
+        if(visited[i]==0 && key[i]<min){
+            min = key[i];
+            min_index = i;
+        }
+    }
+    return min_index;
+}
+
+void print(int vertices, int parent[], int graph[vertices][vertices]){
+    int min_count = 0;
+    printf("Edge\tWeight\n");
+    for(int i =1; i<vertices; i++){
+        printf("%d - %d\t%d\n",parent[i],i,graph[i][parent[i]]);
+        min_count += graph[i][parent[i]];
+    }
+    printf("min cost :%d",min_count);
+}
+
+void prims(int vertices, int graph[vertices][vertices]){
+    int parent[vertices];
+    int key[vertices];
+    int visited[vertices];
+
+    for(int i=0;i<vertices;i++){
+        visited[i]=0;
+        key[i]=9999;
+    }
+
+    key[0] = 0;
+    parent[0] = -1;
+
+    for(int count = 0; count < vertices-1; count++){
+        int u = minKey(visited,vertices,key);
+        visited[u] = 1;
+
+        for(int v=0; v<vertices; v++){
+            if(graph[u][v] && visited[v] == 0 && graph[u][v]<key[v]){
+                parent[v] = u;
+                key[v] = graph[u][v];
+            }
+        }
+    }
+    print(vertices,parent,graph);
+}
+
+int main(){
+    int vertices, edges;
+    printf("enter no of vertices:");
+    scanf("%d",&vertices);
+    printf("enter no of edges:");
+    scanf("%d",&edges);
+
+    int cost[vertices][vertices];
+    int adj[vertices][vertices];
+
+    for(int i=0;i<vertices;i++){
+        for(int j=0;j<vertices;j++){
+            adj[i][j]=0;
+            cost[i][j] = 0;
+        }
+    }
+    int a,b,c;
+    printf("Enter the edges and cost\n");
+    for(int i=0; i<edges; i++){
+        scanf("%d %d %d",&a,&b,&c);
+        adj[a][b] = adj[b][a] = 1;
+        cost[a][b] = cost[b][a] = c;
+    }
+
+    prims(vertices,cost);
+    return 0;
+}
+
+//kruskals
+#include<stdio.h>
+#include<stdlib.h>
+
+int find(int i, int parent[]){
+    if(parent[i]==i){
+        return i;
+    }
+    return find(parent[i],parent);
+}
+
+void unions(int a, int b, int parent[]){
+    int x = find(a,parent);
+    int y = find(b,parent);
+
+    if(x==y){
+        return;
+    }
+    parent[y] = x;
+}
+
+void kruskal(int vertices,int cost[vertices][vertices], int parent[]){
+    int count =0, mincost = 0,min, a,b,u,v;
+    printf("Edge\tWeight\n");
+
+    while(count<vertices){
+        min = 9999;
+        for(int i=0; i<vertices; i++){
+            for(int j=0; j<vertices; j++){
+                if(cost[i][j] < min){
+                    min = cost[i][j];
+                    a=u=i;
+                    b=v=j;
+                }
+            }
+        }
+        u = find(u,parent);
+        v = find(v,parent);
+
+        if(u!=v){
+            unions(u,v,parent);
+            printf("%d-%d\t%d\n",a,b,cost[a][b]);
+            mincost += cost[a][b];
+        }
+        cost[a][b] = cost[b][a] = 9999;
+        count++;
+    }
+    printf("Minimum cost : %d",mincost);
+}
+
+int main(){
+    int vertices, edges;
+    printf("enter no of vertices:");
+    scanf("%d",&vertices);
+    printf("enter no of edges:");
+    scanf("%d",&edges);
+
+    int cost[vertices][vertices];
+    int adj[vertices][vertices];
+    int parent[vertices];
+
+    for(int i=0;i<vertices;i++){
+        parent[i] = i;
+        for(int j=0;j<vertices;j++){
+            adj[i][j]=0;
+            cost[i][j] = 9999;
+        }
+    }
+    int a,b,c;
+    printf("Enter the edges and cost\n");
+    for(int i=0; i<edges; i++){
+        scanf("%d %d %d",&a,&b,&c);
+        adj[a][b] = adj[b][a] = 1;
+        cost[a][b] = cost[b][a] = c;
+    }
+
+    kruskal(vertices,cost,parent);
+    return 0;
+}
+
+//dj
+#include<stdio.h>
+
+void dijikstra(int vertices, int cost[vertices][vertices], int dist[vertices]){
+    int s=0;
+    int parent[vertices];
+    int visited[vertices];
+    for(int i=0; i<vertices; i++){
+        visited[i] = 0;
+        dist[i] = cost[s][i];
+    }
+
+    visited[s] = 1;
+    dist[s] = 0;
+    int count=1;
+
+    while(count<vertices){
+        int mindist = 9999;
+        int nextnode;
+        for(int i=0; i<vertices; i++){
+            if(visited[i]==0 && dist[i]<mindist){
+                mindist = dist[i];
+                nextnode = i;
+            }
+        }
+        visited[nextnode] = 1;
+        for(int i=0; i<vertices; i++){
+            if(visited[i]==0 && (cost[nextnode][i] + mindist) < dist[i]){
+                dist[i] = cost[nextnode][i] + mindist;
+            }
+        }
+        count++;
+    }
+}
+
+int main(){
+    int vertices, edges, mincost=0;
+    printf("enter no of vertices:");
+    scanf("%d",&vertices);
+    printf("enter no of edges:");
+    scanf("%d",&edges);
+
+    int cost[vertices][vertices];
+    int adj[vertices][vertices];
+    int dist[vertices];
+
+    for(int i=0;i<vertices;i++){
+        for(int j=0;j<vertices;j++){
+            adj[i][j]=0;
+            cost[i][j] = 9999;
+        }
+    }
+    int a,b,c;
+    printf("Enter the edges and cost\n");
+    for(int i=0; i<edges; i++){
+        scanf("%d %d %d",&a,&b,&c);
+        adj[a][b] = adj[b][a] = 1;
+        cost[a][b] = cost[b][a] = c;
+    }
+
+    dijikstra(vertices,cost,dist);
+    printf("Vertex\tDistance\n");
+    for (int i = 0; i < vertices; i++)
+    {
+        printf("%d\t%d\n", i, dist[i]);
+    }
+    printf("Min cost:%d",dist[vertices-1]);
+    return 0;
+}

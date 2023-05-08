@@ -1,0 +1,320 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node
+{
+    int data;
+    struct node *left;
+    struct node *right;
+};
+
+struct queue
+{
+    int size;
+    int f;
+    int r;
+    struct node *arr[30];
+};
+
+struct node *createNode(int data)
+{
+    struct node *n = (struct node *)malloc(sizeof(struct node));
+    n->left = NULL;
+    n->right = NULL;
+    n->data = data;
+    return n;
+}
+
+void inorder(struct node *root)
+{
+    if (root != NULL)
+    {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+//Search for element on the tree
+struct node *searchBST(struct node *root, int val)
+{
+    if (root == NULL)
+    {
+        return NULL;
+    }
+    if (root->data == val)
+    {
+        return root;
+    }
+    else if (val < root->data)
+    {
+        return searchBST(root->left, val);
+    }
+    else
+    {
+        return searchBST(root->right, val);
+    }
+}
+
+//Insert in the node
+void insert(struct node* root, int val){
+    struct node* s = searchBST(root,val);//rooto make sure than element is not already in the tree
+
+    struct node* v = createNode(val);
+
+    if(s==NULL){
+        while(root!=NULL){
+            if(val < root->data){
+                if(root->left==NULL){
+                    root->left = v;
+                    break;
+                }
+                root = root->left;
+            }
+            else{
+                if(root->right==NULL){
+                    root->right = v;
+                    break;
+                }
+                root = root->right;
+            }
+        }
+    }
+    if(s!=NULL){
+        printf("Cannot insert %d\n",val);
+    }
+}
+
+//rooto get the inorder predecessor of the node
+struct node* inOrderPredecessor(struct node* root){
+    root=root->left;
+    while(root->right != NULL){
+        root = root->right;
+    }
+    return root;
+}
+
+//Delete the node
+struct node* delete(struct node* root, int val){
+    if(root==NULL){
+        return NULL;
+    }
+    if(root->left == NULL && root->right == NULL){
+        free(root);
+        return NULL;
+    }
+    if(val < root->data){
+        root->left = delete(root->left, val);
+    }
+    else if(val > root->data){
+        root->right = delete(root->right, val);
+    }
+    else{
+        struct node* iPre = inOrderPredecessor(root);
+        root->data = iPre->data;
+        root->left = delete(root->left,iPre->data);
+    }
+    return root;
+}
+
+// Mirror image
+// void mirrorImage(struct node *root)
+// {
+//     struct node *temp;
+//     if (root != NULL)
+//     {
+//         mirrorImage(root->left);
+//         mirrorImage(root->right);
+//         temp = root->left;
+//         root->left = root->right;
+//         root->right = temp;
+//     }
+// }
+
+// Height of tree
+int height(struct node *root)
+{
+    int ldepth, rdepth;
+    if (root == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        ldepth = height(root->left);
+        rdepth = height(root->right);
+        if (ldepth > rdepth)
+        {
+            return ldepth + 1;
+        }
+        else
+        {
+            return rdepth + 1;
+        }
+    }
+}
+
+// Display leaf nodes
+void displayLeafNodes(struct node *node)
+{
+    if (node == NULL)
+        return;
+
+    if (node->left == NULL && node->right == NULL)
+        printf("%d ", node->data);
+
+    if (node->left != NULL)
+        displayLeafNodes(node->left);
+
+    if (node->right != NULL)
+        displayLeafNodes(node->right);
+}
+
+int height_iter(struct node *root) {
+    if (root == NULL) {
+        return 0;
+    }
+    int height = 0;
+    struct node* stack[1000];
+    int top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        struct node* node = stack[top--];
+        if (node->left != NULL) {
+            stack[++top] = node->left;
+            height++;
+        }
+        if (node->right != NULL) {
+            stack[++top] = node->right;
+            height++;
+        }
+        
+    }
+    return height;
+}
+
+void levelWiseDisplay(struct node *root)
+{
+    if (root == NULL)
+        return;
+
+    struct queue *q = (struct queue *)malloc(sizeof(struct queue));
+    q->f = q->r = -1;
+    q->r++;
+    q->arr[q->r] = root;
+    while (q->f < q->r)
+    {
+        q->f++;
+        struct node *node = q->arr[q->f];
+        printf("%d ", node->data);
+
+        if (node->left != NULL)
+        {
+            q->r++;
+            q->arr[q->r] = node->left;
+        }
+
+        if (node->right != NULL)
+        {
+            q->r++;
+            q->arr[q->r] = node->right;
+        }
+    }
+}
+
+
+void displayLeafNodes_iter(struct node* root) {
+    if (root == NULL) {
+        return;
+    }
+    struct node* stack[1000];
+    int top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        struct node* node = stack[top--];
+        if (node->left == NULL && node->right == NULL) {
+            printf("%d ", node->data);
+        }
+        if (node->right != NULL) {
+            stack[++top] = node->right;
+        }
+        if (node->left != NULL) {
+            stack[++top] = node->left;
+        }
+    }
+}
+
+void mirrorImage(struct node* root) {
+    if (root == NULL) {
+        return;
+    }
+    struct node* stack[100];
+    int top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        struct node* node = stack[top--];
+        struct node* temp = node->left;
+        node->left = node->right;
+        node->right = temp;
+        if (node->right != NULL) {
+            stack[++top] = node->right;
+        }
+        if (node->left != NULL) {
+            stack[++top] = node->left;
+        }
+    }
+}
+
+int main()
+{
+    struct node *p = createNode(5);
+    insert(p,7);
+    insert(p,6);
+    insert(p,3);
+    insert(p,1);
+
+    printf("Inserting 2\n");
+    insert(p,2);
+
+    printf("Searching for 2\n");
+    struct node* s = searchBST(p,2);
+    if (s != NULL){
+        printf("Found: %d\n\n", s->data);
+    }
+    else{
+        printf("Element not found\n\n");
+    }
+
+    printf("Deleting 3\n");
+    p = delete(p,3);
+    printf("Searching for 3\n");
+    struct node* d = searchBST(p,3);
+    if (d != NULL){
+        printf("Found: %d\n\n", d->data);
+    }
+    else{
+        printf("Element not found\n\n");
+    }
+
+    printf("Inorder traversal:\n");
+    inorder(p);
+    printf("\n");
+    mirrorImage(p);
+    printf("After mirror image:\n");
+    inorder(p);
+    printf("\n\n");
+
+    printf("Level wise displey:\n");
+    levelWiseDisplay(p);
+    printf("\n\n");
+
+    printf("Height of the tree:\n");
+    printf("%d",height_iter(p));
+    printf("\n\n");
+
+    printf("Display of leaf nodes:\n");
+    displayLeafNodes(p);
+    printf("\n\n");
+
+    return 0;
+}
